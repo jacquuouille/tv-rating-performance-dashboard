@@ -5,13 +5,11 @@
 
 with source as (
 
-    select *
-    from {{ ref('stg_ratings') }}
+    select * from {{ ref('stg_ratings') }}
 
     {% if is_incremental() %}
         where air_date >= (
-            select date_sub(max(air_date), interval 7 day)
-            from {{ this }}
+            select date_sub(max(air_date), interval 7 day) from {{ this }}
         )
     {% endif %}
 
