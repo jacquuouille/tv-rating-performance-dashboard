@@ -1,0 +1,95 @@
+version: 2
+
+models:
+  - name: stg_ratings
+    description: "Staging model for TV analytics data"
+    columns:
+      - name: rating_id
+        description: "Unique identifier for the rating record"
+        tests:
+          - not_null
+      - name: show_id
+        description: "Unique identifier for the TV show"
+        tests:
+          - not_null
+      - name: show_name
+        description: "Name of the TV show"
+        tests:
+          - not_null
+      - name: show_number
+        description: "Season number of the TV show"
+        tests:
+          - not_null
+      - name: week_number
+        description: "Week number of the TV show airing"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
+                max_value: 52
+                inclusive: true
+      - name: air_date
+        description: "Date when the rating was recorded"
+        tests:
+          - not_null
+      - name: channel_name
+        description: "TV channel on which the show aired"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['tf1', 'tmc', 'tfx']
+      - name: show_type
+        description: "Type of the TV show (e.g., daily, prime, daily_rerun)"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['daily', 'prime', 'daily_rerun']
+      - name: show_part_number
+        description: "Part of the show (e.g., episode, special)"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
+                max_value: 2
+      - name: num_viewers
+        description: "Number of views for the TV show"
+        tests:
+          - not_null
+      - name: pct_rating_total
+        description: "Ratings score for the TV show"
+        tests:
+          - not_null
+      - name: pct_rating_frda50
+        description: "Ratings score for the TV show for the FRDA50 demographic"
+        tests:
+          - not_null:
+              config:
+                severity: warn
+                description: "Ratings score for the TV show for the FRDA50 demographic should not be null, but can be missing due to data collection issues."
+      - name: pct_rating_2549
+        description: "Ratings score for the TV show for the 25-49 age demographic"
+        tests:
+          - not_null:
+              config:
+                severity: warn
+                description: "Ratings score for the TV show for the 25-49 age demographic should not be null, but can be missing due to data collection issues."
+      - name: pct_rating_1524
+        description: "Ratings score for the TV show for the 15-24 age demographic"
+        tests:
+          - not_null:
+              config:
+                severity: warn
+      - name: pct_rating_1534
+        description: "Ratings score for the TV show for the 15-34 age demographic"
+        tests:
+          - not_null:
+              config:
+                severity: warn
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: ['show_id', 'air_date', 'show_type', 'show_part_number']
