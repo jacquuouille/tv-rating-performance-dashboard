@@ -1,0 +1,69 @@
+name: dbt_stg_ci
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  run_dbt:
+    runs-on: ubuntu-latest
+
+    env:
+      DBT_PROFILES_DIR: ${{ github.workspace }}/profiles
+      GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
+
+    steps:
+      # 1. Checkout repo
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 2. Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      #  3. Install dbt + BigQuery adapter
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install "dbt-bigquery~=1.11.0"
+
+      # 4. Create GCP credentials file from secret
+      - name: Create GCP credentials file
+        run: |
+          echo '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}' > gcp-key.json
+
+      # 5. Create dbt profiles directory + file
+      - name: Setup dbt profiles
+        run: |
+          mkdir -p profiles
+
+          cat > profiles/profiles.yml << EOF
+          default:
+            target: dev
+            outputs:
+              dev:
+                type: bigquery
+                method: service-account
+                project: tv-performance
+                dataset: tv_analytics
+                keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS') }}"
+                threads: 4
+                timeout_seconds: 300
+                location: US
+          EOF
+
+      # 6. Install dbt dependencies
+      - name: dbt deps
+        run: dbt deps
+
+      # 7. Debug connection (VERY useful in CI)
+      - name: dbt debug
+        run: dbt debug
+
+      # 8. Run dbt build (models + tests)
+      - name: Run dbt build
+        run: dbt build
