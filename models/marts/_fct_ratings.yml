@@ -1,0 +1,89 @@
+version: 2
+
+models:
+  - name: fct_ratings
+    description: >
+      Incremental fact table of daily TV ratings observations. One row per
+      show, per air date, per show part. Built on top of stg_tv_ratings,
+      re-processing a rolling 7-day window to capture late corrections to
+      previously loaded ratings.
+    columns:
+      - name: rating_id
+        description: "Surrogate key generated from show_id, air_date, and show_part. Uniquely identifies a single ratings observation."
+        tests:
+          - unique
+          - not_null
+      - name: show_id
+        description: "Unique identifier for the TV show."
+        tests:
+          - not_null
+      - name: show_name
+        description: "Display name of the TV show."
+      - name: season_number
+        description: "Season number the show belongs to."
+      - name: week_number
+        description: "Broadcast week number for the show."
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
+                max_value: 52
+                inclusive: true
+      - name: air_date
+        description: "Date the show aired."
+        tests:
+          - not_null
+      - name: channel_name
+        description: "Name of the TV channel the show aired on."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['tf1', 'tmc', 'tfx']
+      - name: show_type
+        description: "Category/type of the show (e.g. daily, prime time)."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['daily', 'prime', 'daily_rerun']
+      - name: show_part_number
+        description: "Part number for shows split into multiple segments on the same air date."
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
+                max_value: 2
+      - name: num_viewers
+        description: "Number of viewers for the show."
+      - name: pct_rating_total
+        description: "Overall audience rating for the show."
+      - name: pct_rating_frda50
+        description: "Rating score for the FRDA50 demographic segment."
+        tests:
+          - not_null:
+              config:
+                severity: warn
+      - name: pct_rating_2549
+        description: "Rating score for the 25-49 age demographic."
+        tests:
+          - not_null:
+              config:
+                severity: warn
+                description: "Ratings score for the TV show for the 25-49 age should not be null, but can be missing due to data collection issues."
+      - name: pct_rating_1524
+        description: "Rating score for the 15-24 age demographic."
+        tests:
+          - not_null:
+              config:
+                severity: warn
+                description: "Ratings score for the TV show for the 15-24 age should not be null, but can be missing due to data collection issues."
+      - name: pct_rating_1534
+        description: "Rating score for the 15-34 age demographic."
+        tests:
+          - not_null:
+              config:
+                severity: warn
+                description: "Ratings score for the TV show for the 15-34 age should not be null, but can be missing due to data collection issues."
