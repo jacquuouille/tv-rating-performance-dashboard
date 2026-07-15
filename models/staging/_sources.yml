@@ -1,0 +1,81 @@
+version: 2
+
+sources:
+  - name: tv_analytics
+    database: tv-performance
+    schema: tv_analytics
+    tables:
+      - name: ratings
+        description: "Ratings data for TV shows"
+        columns:
+          - name: show_id
+            description: "Unique identifier for the TV show"
+            tests:
+              - not_null
+          - name: show_name
+            description: "Name of the TV show"
+            tests:
+              - not_null
+          - name: show_season
+            description: "Season number of the TV show"
+            tests:
+              - not_null
+          - name: show_week
+            description: "Week number of the TV show airing"
+            tests:
+              - not_null
+          - name: date
+            description: "Date when the rating was recorded"
+            tests:
+              - not_null
+          - name: channel
+            description: "TV channel on which the show aired"
+            tests:
+              - not_null
+          - name: show_type
+            description: "Type of the TV show (e.g., daily, prime, daily_rerun)"
+            tests:
+              - not_null
+              - accepted_values:
+                  arguments:
+                    values: ['daily', 'prime', 'daily_rerun']
+          - name: show_part
+            description: "Part of the show (e.g., episode, special)"
+            tests:
+              - not_null
+          - name: views
+            description: "Number of views for the TV show"
+            tests:
+              - not_null
+          - name: ratings
+            description: "Ratings score for the TV show"
+            tests:
+              - not_null
+          - name: ratings_frda50
+            description: "Ratings score for the TV show for the FRDA50 demographic"
+            tests:
+              - not_null:
+                  config:
+                    severity: warn
+                    description: "Ratings score for the TV show for the FRDA50 demographic should not be null, but can be missing due to data collection issues."
+          - name: rating_2549
+            description: "Ratings score for the TV show for the 25-49 age demographic"
+            tests:
+              - not_null:
+                  config:
+                    severity: warn
+                    description: "Ratings score for the TV show for the 25-49 age demographic should not be null, but can be missing due to data collection issues."
+          - name: ratings_1524
+            description: "Ratings score for the TV show for the 15-24 age demographic"
+            tests:
+              - not_null:
+                  config:
+                    severity: warn
+                    description: "Ratings score for the TV show for the 15-24 age demographic should not be null, but can be missing due to data collection issues."
+          - name: ratings1534
+            description: "Ratings score for the TV show for the 15-34 age demographic"
+            tests:
+              - not_null:
+                  config:
+                    severity: warn
+                    description: "Ratings score for the TV show for the 15-34 age demographic should not be null, but can be missing due to data collection issues."
