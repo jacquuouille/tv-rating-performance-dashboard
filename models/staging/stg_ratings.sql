@@ -1,3 +1,7 @@
+{{ config(
+    materialized='view'
+) }}
+
 with source as (
 
     select * from {{ source('tv_analytics', 'ratings') }}
@@ -8,7 +12,7 @@ renamed as (
 
     select
 
-        {{ dbt_utils.generate_surrogate_key(['show_id','date','show_type','show_part']) }} as rating_id,
+        {{ dbt_utils.generate_surrogate_key(['show_id', 'date', 'show_type',' show_part']) }} as rating_id,
         show_id,
         show_name,
         show_season as show_number,

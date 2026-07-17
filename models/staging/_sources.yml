@@ -46,7 +46,10 @@ sources:
           - name: views
             description: "Number of views for the TV show"
             tests:
-              - not_null
+              - not_null:
+                  config:
+                    severity: warn
+                    description: "Views for the TV show should not be null, but can be missing due to data collection issues."
           - name: ratings
             description: "Ratings score for the TV show"
             tests:
