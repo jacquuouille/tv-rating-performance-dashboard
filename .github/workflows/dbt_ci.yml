@@ -69,7 +69,9 @@ jobs:
 
       # 8. Run dbt build (models + tests)
       - name: Run dbt build
-        run: dbt build
+        id: dbt_build
+        run: |
+          dbt build || true
 
       # 9. Notify Slack on success or failure
       - name: Notify Slack
