@@ -58,11 +58,17 @@ models:
       - name: num_viewers
         description: "Number of views for the TV show"
         tests:
-          - not_null
+          - not_null:
+              config:
+                severity: warn
+                description: "Views for the TV show should not be null, but can be missing due to data collection issues."
       - name: pct_rating_total
         description: "Ratings score for the TV show"
         tests:
-          - not_null
+          - not_null:
+              config:
+                severity: warn
+                description: "Ratings score for the TV show should not be null, but can be missing due to data collection issues."
       - name: pct_rating_frda50
         description: "Ratings score for the TV show for the FRDA50 demographic"
         tests:
