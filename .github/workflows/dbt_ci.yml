@@ -5,6 +5,9 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
+  schedule:
+    - cron: '0 11 * * *'  # Runs daily at midnight UTC
+  workflow_dispatch:  # Allows manual triggering of the workflow
 
 jobs:
   run_dbt:
