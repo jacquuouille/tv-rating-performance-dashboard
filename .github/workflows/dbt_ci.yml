@@ -70,3 +70,16 @@ jobs:
       # 8. Run dbt build (models + tests)
       - name: Run dbt build
         run: dbt build
+
+      # 9. Notify Slack on success or failure
+      - name: Notify Slack
+        if: always()
+        run: |
+          if [ "${{ steps.dbt_build.outcome }}" == "success" ]; then
+            STATUS="✅ dbt daily run succeeded for tv-performance"
+          else
+            STATUS="❌ dbt daily run failed for tv-performance"
+          fi
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{"text":"'"$STATUS"' — '"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"'"}' \
+          ${{ secrets.SLACK_WEBHOOK_URL }}
