@@ -7,5 +7,5 @@
 select * from {{ ref('stg_ratings') }}
 
 {% if is_incremental() %}
-where air_date >= date_sub(current_date(), interval 7 day)
+where air_date >= date_sub(current_date(), interval 3 month)
 {% endif %}
