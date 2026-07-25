@@ -29,16 +29,21 @@ jobs:
         run: npm install
 
       - name: Extract BigQuery credentials from service account key
+        env:
+          GCP_KEY_JSON: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
         run: |
           echo "EVIDENCE_SOURCE__tv_performance__authenticator=service-account" >> "$GITHUB_ENV"
           echo "EVIDENCE_SOURCE__tv_performance__location=US" >> "$GITHUB_ENV"
-          echo "EVIDENCE_SOURCE__tv_performance__client_email=$(echo '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}' | jq -r .client_email)" >> "$GITHUB_ENV"
-          echo "EVIDENCE_SOURCE__tv_performance__project_id=$(echo '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}' | jq -r .project_id)" >> "$GITHUB_ENV"
+          echo "EVIDENCE_SOURCE__tv_performance__client_email=$(echo "$GCP_KEY_JSON" | jq -r .client_email)" >> "$GITHUB_ENV"
+          echo "EVIDENCE_SOURCE__tv_performance__project_id=$(echo "$GCP_KEY_JSON" | jq -r .project_id)" >> "$GITHUB_ENV"
           {
-            echo "EVIDENCE_SOURCE__tv_performance__private_key<<EOF"
-            echo '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}' | jq -r .private_key
-            echo "EOF"
+            echo "EVIDENCE_SOURCE__tv_performance__private_key<<PKEOF"
+            echo "$GCP_KEY_JSON" | jq -r .private_key
+            echo "PKEOF"
           } >> "$GITHUB_ENV"
+
+      - name: Debug - confirm client_email was extracted
+        run: echo "Extracted client_email is:'$EVIDENCE_SOURCE__tv_performance__client_email'"
 
       - name: Build Evidence site
         run: |
