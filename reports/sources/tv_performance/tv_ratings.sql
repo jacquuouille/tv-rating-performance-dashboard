@@ -1,1 +1,1 @@
-select * from `tv-performance.tv_analytics.fct_tv_ratings`
+select * from `tv-performance.tv_analytics.fct_ratings`
