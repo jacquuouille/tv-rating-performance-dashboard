@@ -1,8 +1,9 @@
 ---
-title: Home
+title: Overview
 ---
 
-# Welcome
+A snapshot of the ratings performance of the selected season of Secret Story.
 
-This is your new project's homepage. Edit this file to get started.
-Work In Progress
+
+## Audience
+Tracks the evolution of audience viewership and ratings over time, giving an immediate read on how the season is performing.
