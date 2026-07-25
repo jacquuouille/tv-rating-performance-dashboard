@@ -5,7 +5,7 @@ on:
     workflows: ["dbt_stg_ci"]
     types:
       - completed
-  workflow_dispatch:  # allows manual triggering too
+  workflow_dispatch:
 
 jobs:
   build_and_deploy:
@@ -28,12 +28,19 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Create GCP credentials file
-        run: echo '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}' > gcp-key.json
+      - name: Extract BigQuery credentials from service account key
+        run: |
+          echo "EVIDENCE_SOURCE__tv_performance__authenticator=service-account" >> "$GITHUB_ENV"
+          echo "EVIDENCE_SOURCE__tv_performance__location=US" >> "$GITHUB_ENV"
+          echo "EVIDENCE_SOURCE__tv_performance__client_email=$(echo '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}' | jq -r .client_email)" >> "$GITHUB_ENV"
+          echo "EVIDENCE_SOURCE__tv_performance__project_id=$(echo '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}' | jq -r .project_id)" >> "$GITHUB_ENV"
+          {
+            echo "EVIDENCE_SOURCE__tv_performance__private_key<<EOF"
+            echo '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}' | jq -r .private_key
+            echo "EOF"
+          } >> "$GITHUB_ENV"
 
       - name: Build Evidence site
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/reports/gcp-key.json
         run: |
           npm run sources
           npm run build
