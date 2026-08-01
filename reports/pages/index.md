@@ -18,7 +18,8 @@ A snapshot of the ratings performance of the selected season of Secret Story, fi
     name=season_filter
     data={season_options}
     value=show_number
-    title="Season" 
+    title="Season"
+    defaultValue=14
 />
 
 ## Audience
@@ -41,6 +42,7 @@ Tracks the evolution of audience viewership and ratings over the course of the s
     data={channel_listing}
     value=channel_name
     title="Channel" 
+    defaultValue=TMC
 />
 
 <Tabs background=true fullWidth=true color=primary>
@@ -241,6 +243,8 @@ Tracks the evolution of audience viewership and ratings over the course of the s
     comparison=wow_pct_viewers
     comparisonFmt=pct1
     comparisonTitle="WoW"
+    emptySet=pass
+    emptyMessage="No prime data for this channel"
     <Info description="Latest week average"
 />
 
@@ -252,6 +256,8 @@ Tracks the evolution of audience viewership and ratings over the course of the s
     comparison=wow_pct_ratings
     comparisonFmt=pct1
     comparisonTitle="WoW"
+    emptySet=pass
+    emptyMessage="No prime data for this channel"
     <Info description="Latest week average"
 />
 
@@ -263,6 +269,8 @@ Tracks the evolution of audience viewership and ratings over the course of the s
     comparison=wow_pct_ratings_frda50
     comparisonFmt=pct1
     comparisonTitle="WoW"
+    emptySet=pass
+    emptyMessage="No prime data for this channel"
     <Info description="Latest week average"
 />
 
@@ -330,6 +338,8 @@ Tracks the evolution of audience viewership and ratings over the course of the s
     y2Fmt=pct1
     y2SeriesType=line
     y2AxisTitle="Ratings"
+    emptySet=pass
+    emptyMessage="No prime data for this channel"
     sort=false
     colorPalette={['#a4b8fc', '#111726ae']}
     chartAreaHeight=200
@@ -374,6 +384,8 @@ Tracks the evolution of audience viewership and ratings over the course of the s
     type=grouped
     sort=false
     chartAreaHeight=200
+    emptySet=pass
+    emptyMessage="No prime data for this channel"
     labels=true
     labelFmt=num0k
     colorPalette={['#a4b8fc', '#111726be']}
