@@ -43,7 +43,8 @@ Tracks the evolution of audience viewership and ratings over the course of the s
     title="Channel" 
 />
 
-### Daily Audience Trend
+<Tabs background=true fullWidth=true color=primary>
+    <Tab label="Daily"> 
 
 ``` sql daily_weekly_audience
     with 
@@ -121,7 +122,7 @@ Tracks the evolution of audience viewership and ratings over the course of the s
     comparisonFmt=pct1
     comparisonTitle="WoW"
     <Info description="Latest week average"
-/>
+/> 
 
 ``` sql daily_audience_over_season
 
@@ -180,19 +181,25 @@ Tracks the evolution of audience viewership and ratings over the course of the s
     y2Fmt=pct1
     y2SeriesType=line
     y2AxisTitle="Ratings"
-    colorPalette={['#a4b8fc', '#111726be']}
+    colorPalette={['#a4b8fc', '#111726ae']}
     chartAreaHeight=200
     title="Daily Audience Trend"
     subtitle="Weekdays only (Monday-Friday)"
     echartsOptions={{
         series: [
             {},
-            {showSymbol: true, symbol: 'emptyCircle', symbolSize: 7}
+            {showSymbol: true, symbol: 'emptyCircle', symbolSize: 7},
+            {
+                lineStyle: {type: 'dashed', width: 1.5, color: '#ffb432'},
+                itemStyle: {color: '#ffb432'},
+                color: '#ffb432'
+            }
         ]
     }}
 />
 
-### Prime Audience Trend
+</Tab>
+<Tab label="Prime">
 
 ``` sql prime_weekly_audience
     with 
@@ -221,8 +228,6 @@ Tracks the evolution of audience viewership and ratings over the course of the s
         , (ratings - lag(ratings, 1) over (order by week_number)) / lag(ratings, 1) over (order by week_number) as wow_pct_ratings
         , ratings_frda50
         , (ratings_frda50 - lag(ratings_frda50, 1) over (order by week_number)) / lag(ratings_frda50, 1) over (order by week_number) as wow_pct_ratings_frda50
-        , ratings_2549
-        , (ratings_2549 - lag(ratings_2549, 1) over (order by week_number)) / lag(ratings_2549, 1) over (order by week_number) as wow_pct_ratings_2549
     from 
         weekly
     order by 
@@ -260,18 +265,6 @@ Tracks the evolution of audience viewership and ratings over the course of the s
     comparisonTitle="WoW"
     <Info description="Latest week average"
 />
-
-<BigValue
-    data={prime_weekly_audience}
-    value=ratings_2549
-    title="Ratings 25-49"
-    fmt=pct1
-    comparison=wow_pct_ratings_2549
-    comparisonFmt=pct1
-    comparisonTitle="WoW"
-    <Info description="Latest week average"
-/>
-
 
 ``` sql prime_audience_over_season
 
@@ -338,17 +331,21 @@ Tracks the evolution of audience viewership and ratings over the course of the s
     y2SeriesType=line
     y2AxisTitle="Ratings"
     sort=false
-    colorPalette={['#a4b8fc', '#111726be']}
+    colorPalette={['#a4b8fc', '#111726ae']}
     chartAreaHeight=200
     title="Prime Audience Trend"
     subtitle="Average across episode (parts 1 & 2)"
     echartsOptions={{
-    series: [
-        {barWidth: '95%', barCategoryGap: '10%'},
-        {showSymbol: true, symbol: 'emptyCircle', symbolSize: 7},
-        {showSymbol: false}
-    ]
-}}
+        series: [
+            {},
+            {showSymbol: true, symbol: 'emptyCircle', symbolSize: 7},
+            {
+                lineStyle: {type: 'dashed', width: 1.5, color: '#ffb432'},
+                itemStyle: {color: '#ffb432'},
+                color: '#ffb432'
+            }
+        ]
+    }}
 />
 
 ``` sql prime_audience_over_season_by_part
@@ -366,7 +363,7 @@ Tracks the evolution of audience viewership and ratings over the course of the s
         and show_number = '${inputs.season_filter.value}'
         and upper(channel_name) = '${inputs.channel_filter.value}'
     order by 
-        1
+        1, 3
 ```
 
 <BarChart
@@ -377,7 +374,12 @@ Tracks the evolution of audience viewership and ratings over the course of the s
     type=grouped
     sort=false
     chartAreaHeight=200
+    labels=true
+    labelFmt=num0k
     colorPalette={['#a4b8fc', '#111726be']}
     title="Prime Audience Trend by Part"
-    subtitle="Part 1 vs. Part 2"
+    subtitle="Parts 1 vs. 2"
 />
+
+</Tab>
+</Tabs>
