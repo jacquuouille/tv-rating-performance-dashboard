@@ -79,10 +79,15 @@ Tracks the evolution of audience viewership and ratings over the course of the s
 />
 
 ``` sql audience_over_season
+
+    -- Evidence shifts BigQuery DATE values back by 1 day when loading via `npm run sources` 
+    -- Fix: correct the actual DATE value at the source with `+ interval 1 day`, so air_date stays a true DATE type and matches BigQuery exactly. 
+    -- The function strftime() cannot work as it only reformats the value to text 
+
     with 
     daily_ratings as ( 
         select
-            air_date,
+            air_date + interval 1 day as air_date, 
             sum(num_viewers) as viewers,
             sum(pct_rating_total) / 100 as ratings
         from 
@@ -122,7 +127,6 @@ Tracks the evolution of audience viewership and ratings over the course of the s
     order by 
         b.air_date
 ```
-
 <BarChart
     data={audience_over_season}
     x=air_date
