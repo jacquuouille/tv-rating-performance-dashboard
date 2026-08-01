@@ -3,7 +3,7 @@ appearance:
   switcher: true
 
 deployment:
-  basePath: /cloud-function-sync-tv-ratings-bis
+  basePath: /tv-rating-performance-dashboard
 
 theme:
   colorPalettes:
