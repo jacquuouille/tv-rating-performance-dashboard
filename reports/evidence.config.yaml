@@ -2,6 +2,9 @@ appearance:
   default: system
   switcher: true
 
+deployment:
+  basePath: /cloud-function-sync-tv-ratings-bis
+
 theme:
   colorPalettes:
     default:
