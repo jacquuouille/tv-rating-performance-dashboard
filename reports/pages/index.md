@@ -19,7 +19,6 @@ A snapshot of the ratings performance of the selected season of Secret Story, fi
     data={season_options}
     value=show_number
     title="Season"
-    defaultValue=14
 />
 
 ## Audience
@@ -41,8 +40,7 @@ Tracks the evolution of audience viewership and ratings over the course of the s
     name=channel_filter
     data={channel_listing}
     value=channel_name
-    title="Channel" 
-    defaultValue=TMC
+    title="Channel"
 />
 
 <Tabs background=true fullWidth=true color=primary>
