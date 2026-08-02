@@ -19,6 +19,7 @@ A snapshot of ratings performance for the selected season of a French TV show ðŸ
     data={season_options}
     value=show_number
     title="Season"
+    order=show_number [desc]
 />
 
 ## Audience
@@ -90,7 +91,7 @@ Evolution of audience viewership and ratings across the season, daily and prime 
         channel_name != 'tf1'
         and show_number = '${inputs.season_filter.value}'
     order by 
-        1 desc
+        1
 ```
 
 <Dropdown
@@ -98,7 +99,7 @@ Evolution of audience viewership and ratings across the season, daily and prime 
     data={channel_listing}
     value=channel_name
     title="Channel"
-    order=true
+    order=channel_name [desc]
 />
 
 ``` sql daily_weekly_audience
@@ -328,7 +329,7 @@ Evolution of audience viewership and ratings across the season, daily and prime 
     comparisonFmt=pct1
     comparisonTitle="WoW"
     emptySet=pass
-    emptyMessage="Prime data available for TMC only on season 14"
+    emptyMessage="Prime data available on TMC for season 14, TFX for season 13"
     <Info description="Latest week average"
 />
 
@@ -341,7 +342,7 @@ Evolution of audience viewership and ratings across the season, daily and prime 
     comparisonFmt=pct1
     comparisonTitle="WoW"
     emptySet=pass
-    emptyMessage="Prime data available for TMC only on season 14"
+    emptyMessage="Prime data available on TMC for season 14, TFX for season 13"
     <Info description="Latest week average"
 />
 
@@ -354,7 +355,7 @@ Evolution of audience viewership and ratings across the season, daily and prime 
     comparisonFmt=pct1
     comparisonTitle="WoW"
     emptySet=pass
-    emptyMessage="Prime data available for TMC only on season 14"
+    emptyMessage="Prime data available on TMC for season 14, TFX for season 13"
     <Info description="Latest week average"
 />
 
@@ -423,7 +424,7 @@ Evolution of audience viewership and ratings across the season, daily and prime 
     y2SeriesType=line
     y2AxisTitle="Ratings"
     emptySet=pass
-    emptyMessage="Prime data available for TMC only on season 14"
+    emptyMessage="Prime data available on TMC for season 14, TFX for season 13"
     sort=false
     colorPalette={['#a4b8fc', '#111726ae']}
     chartAreaHeight=200
@@ -469,7 +470,7 @@ Evolution of audience viewership and ratings across the season, daily and prime 
     sort=false
     chartAreaHeight=200
     emptySet=pass
-    emptyMessage="Prime data available for TMC only on season 14"
+    emptyMessage="Prime data available on TMC for season 14, TFX for season 13"
     labels=true
     labelFmt=num0k
     colorPalette={['#a4b8fc', '#111726be']}
