@@ -2,7 +2,7 @@
 title: Overview
 ---
 
-A snapshot of the ratings performance of the selected season of Secret Story, filtered by channel.
+A snapshot of ratings performance for the selected season of a French TV show 👁️, filterable by channel.
 
 
 ```sql season_options
@@ -11,7 +11,7 @@ A snapshot of the ratings performance of the selected season of Secret Story, fi
     from 
         tv_ratings
     order by 
-        1
+        1 desc
 ```
 
 <Dropdown
@@ -22,9 +22,66 @@ A snapshot of the ratings performance of the selected season of Secret Story, fi
 />
 
 ## Audience
-Tracks the evolution of audience viewership and ratings over the course of the season, giving an immediate read on how it is performing.
+Evolution of audience viewership and ratings across the season, daily and prime shows.
 
-```sql channel_listing
+``` sql overview_audience 
+        select
+            coalesce(
+                avg(case when channel_name = 'tmc' and show_type = 'daily' then num_viewers else null end)
+                , avg(case when channel_name = 'tfx' and show_type = 'daily' then num_viewers else null end)
+            ) as viewers_daily
+            , coalesce(
+                avg(case when channel_name = 'tmc' and show_type = 'daily' then pct_rating_total else null end) / 100
+                , avg(case when channel_name = 'tfx' and show_type = 'daily' then pct_rating_total else null end) / 100
+            ) as ratings_daily
+            , coalesce(
+                avg(case when channel_name = 'tmc' and show_type = 'prime' then num_viewers else null end)
+                , avg(case when channel_name = 'tfx' and show_type = 'prime' then num_viewers else null end) 
+            ) as viewers_prime
+            , coalesce(
+                avg(case when channel_name = 'tmc' and show_type = 'prime' then pct_rating_total else null end) / 100
+                , avg(case when channel_name = 'tfx' and show_type = 'prime' then pct_rating_total else null end) / 100 
+            ) as ratings_prime
+        from 
+            tv_ratings
+        where
+            show_number = '${inputs.season_filter.value}'  
+```
+
+<BigValue
+    data={overview_audience}
+    value=viewers_daily
+    title="Daily Viewers"
+    <Info description="Season average — TMC for season 14, TFX for season 13"
+/>
+
+<BigValue
+    data={overview_audience}
+    value=ratings_daily
+    title="Daily Ratings 4+"
+    fmt=pct1
+     <Info description="Season average — TMC for season 14, TFX for season 13"
+/>
+
+<BigValue
+    data={overview_audience}
+    value=viewers_prime
+    title="Prime Viewers"
+     <Info description="Season average — TMC for season 14, TFX for season 13"
+/>
+
+<BigValue
+    data={overview_audience}
+    value=ratings_prime
+    title="Prime Ratings 4+"
+    fmt=pct1
+    <Info description="Season average — TMC for season 14, TFX for season 13"
+/>
+
+<Tabs background=true fullWidth=true color=primary>
+    <Tab label="Daily"> 
+
+    ```sql channel_listing
     select 
         distinct upper(channel_name) as channel_name
     from 
@@ -33,7 +90,7 @@ Tracks the evolution of audience viewership and ratings over the course of the s
         channel_name != 'tf1'
         and show_number = '${inputs.season_filter.value}'
     order by 
-        1
+        1 desc
 ```
 
 <Dropdown
@@ -41,10 +98,8 @@ Tracks the evolution of audience viewership and ratings over the course of the s
     data={channel_listing}
     value=channel_name
     title="Channel"
+    order=true
 />
-
-<Tabs background=true fullWidth=true color=primary>
-    <Tab label="Daily"> 
 
 ``` sql daily_weekly_audience
     with 
@@ -89,6 +144,8 @@ Tracks the evolution of audience viewership and ratings over the course of the s
     comparisonFmt=pct1
     comparisonTitle="WoW"
     <Info description="Latest week average"
+    emptySet=pass
+    emptyMessage="Season 13 data available on TFX only"
 />
 
 <BigValue
@@ -100,6 +157,8 @@ Tracks the evolution of audience viewership and ratings over the course of the s
     comparisonFmt=pct1
     comparisonTitle="WoW"
     <Info description="Latest week average"
+    emptySet=pass
+    emptyMessage="Season 13 data available on TFX only"
 />
 
 <BigValue
@@ -111,6 +170,8 @@ Tracks the evolution of audience viewership and ratings over the course of the s
     comparisonFmt=pct1
     comparisonTitle="WoW"
     <Info description="Latest week average"
+    emptySet=pass
+    emptyMessage="Season 13 data available on TFX only"
 />
 
 <BigValue
@@ -122,6 +183,8 @@ Tracks the evolution of audience viewership and ratings over the course of the s
     comparisonFmt=pct1
     comparisonTitle="WoW"
     <Info description="Latest week average"
+    emptySet=pass
+    emptyMessage="Season 13 data available on TFX only"
 /> 
 
 ``` sql daily_audience_over_season
@@ -185,6 +248,8 @@ Tracks the evolution of audience viewership and ratings over the course of the s
     chartAreaHeight=200
     title="Daily Audience Trend"
     subtitle="Weekdays only (Monday-Friday)"
+    emptySet=pass
+    emptyMessage="Season 13 data available on TFX only"
     echartsOptions={{
         series: [
             {},
@@ -200,6 +265,27 @@ Tracks the evolution of audience viewership and ratings over the course of the s
 
 </Tab>
 <Tab label="Prime">
+
+
+    ```sql channel_listing
+    select 
+        distinct upper(channel_name) as channel_name
+    from 
+        tv_ratings
+    where 
+        channel_name != 'tf1'
+        and show_number = '${inputs.season_filter.value}'
+    order by 
+        1 desc
+```
+
+<Dropdown
+    name=channel_filter
+    data={channel_listing}
+    value=channel_name
+    title="Channel"
+    order=true
+/>
 
 ``` sql prime_weekly_audience
     with 
@@ -242,7 +328,7 @@ Tracks the evolution of audience viewership and ratings over the course of the s
     comparisonFmt=pct1
     comparisonTitle="WoW"
     emptySet=pass
-    emptyMessage="No prime data for this channel"
+    emptyMessage="Prime data available for TMC only on season 14"
     <Info description="Latest week average"
 />
 
@@ -255,7 +341,7 @@ Tracks the evolution of audience viewership and ratings over the course of the s
     comparisonFmt=pct1
     comparisonTitle="WoW"
     emptySet=pass
-    emptyMessage="No prime data for this channel"
+    emptyMessage="Prime data available for TMC only on season 14"
     <Info description="Latest week average"
 />
 
@@ -268,7 +354,7 @@ Tracks the evolution of audience viewership and ratings over the course of the s
     comparisonFmt=pct1
     comparisonTitle="WoW"
     emptySet=pass
-    emptyMessage="No prime data for this channel"
+    emptyMessage="Prime data available for TMC only on season 14"
     <Info description="Latest week average"
 />
 
@@ -337,7 +423,7 @@ Tracks the evolution of audience viewership and ratings over the course of the s
     y2SeriesType=line
     y2AxisTitle="Ratings"
     emptySet=pass
-    emptyMessage="No prime data for this channel"
+    emptyMessage="Prime data available for TMC only on season 14"
     sort=false
     colorPalette={['#a4b8fc', '#111726ae']}
     chartAreaHeight=200
@@ -383,7 +469,7 @@ Tracks the evolution of audience viewership and ratings over the course of the s
     sort=false
     chartAreaHeight=200
     emptySet=pass
-    emptyMessage="No prime data for this channel"
+    emptyMessage="Prime data available for TMC only on season 14"
     labels=true
     labelFmt=num0k
     colorPalette={['#a4b8fc', '#111726be']}
