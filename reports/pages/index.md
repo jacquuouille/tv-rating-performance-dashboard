@@ -2,7 +2,7 @@
 title: Overview
 ---
 
-A snapshot of ratings performance for the selected season of a French TV show 👁️, filterable by channel.
+A snapshot of ratings performance for the selected season of the French TV show 👁️, filterable by channel.
 
 
 ```sql season_options
@@ -19,7 +19,7 @@ A snapshot of ratings performance for the selected season of a French TV show �
     data={season_options}
     value=show_number
     title="Season"
-    order=show_number [desc]
+    order=show_number
 />
 
 ## Audience
@@ -99,7 +99,7 @@ Evolution of audience viewership and ratings across the season, daily and prime 
     data={channel_listing}
     value=channel_name
     title="Channel"
-    order=channel_name [desc]
+    order=channel_name
 />
 
 ``` sql daily_weekly_audience
@@ -246,7 +246,6 @@ Evolution of audience viewership and ratings across the season, daily and prime 
     y2SeriesType=line
     y2AxisTitle="Ratings"
     colorPalette={['#a4b8fc', '#111726ae']}
-    chartAreaHeight=200
     title="Daily Audience Trend"
     subtitle="Weekdays only (Monday-Friday)"
     emptySet=pass
@@ -427,7 +426,6 @@ Evolution of audience viewership and ratings across the season, daily and prime 
     emptyMessage="Prime data available on TMC for season 14, TFX for season 13"
     sort=false
     colorPalette={['#a4b8fc', '#111726ae']}
-    chartAreaHeight=200
     title="Prime Audience Trend"
     subtitle="Average across episode (parts 1 & 2)"
     echartsOptions={{
@@ -468,7 +466,6 @@ Evolution of audience viewership and ratings across the season, daily and prime 
     series=show_part_number_label
     type=grouped
     sort=false
-    chartAreaHeight=200
     emptySet=pass
     emptyMessage="Prime data available on TMC for season 14, TFX for season 13"
     labels=true
