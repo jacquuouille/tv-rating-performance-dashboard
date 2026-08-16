@@ -94,15 +94,7 @@ Evolution of audience viewership and ratings across the season, daily and prime 
         1
 ```
 
-<Dropdown
-    name=channel_filter
-    data={channel_listing}
-    value=channel_name
-    title="Channel"
-    order=channel_name
-/>
-
-``` sql daily_weekly_audience
+``` sql daily_weekly_audience_kpis
     with 
     weekly as (
         select
@@ -115,8 +107,7 @@ Evolution of audience viewership and ratings across the season, daily and prime 
             tv_ratings
         where
             show_type != 'prime'
-            and show_number = '${inputs.season_filter.value}'
-            and upper(channel_name) = '${inputs.channel_filter.value}'
+            and show_number = '${inputs.season_filter.value}' 
         group by 
             1
     )
@@ -138,7 +129,7 @@ Evolution of audience viewership and ratings across the season, daily and prime 
 ```
 
 <BigValue
-    data={daily_weekly_audience}
+    data={daily_weekly_audience_kpis}
     value=viewers
     title="Viewers"
     comparison=wow_pct_viewers
@@ -150,7 +141,7 @@ Evolution of audience viewership and ratings across the season, daily and prime 
 />
 
 <BigValue
-    data={daily_weekly_audience}
+    data={daily_weekly_audience_kpis}
     value=ratings
     title="Ratings 4+"
     fmt=pct1
@@ -163,7 +154,7 @@ Evolution of audience viewership and ratings across the season, daily and prime 
 />
 
 <BigValue
-    data={daily_weekly_audience}
+    data={daily_weekly_audience_kpis}
     value=ratings_frda50
     title="Ratings FRDA50"
     fmt=pct1
@@ -176,7 +167,7 @@ Evolution of audience viewership and ratings across the season, daily and prime 
 />
 
 <BigValue
-    data={daily_weekly_audience}
+    data={daily_weekly_audience_kpis}
     value=ratings_2549
     title="Ratings 25-49"
     fmt=pct1
@@ -188,8 +179,7 @@ Evolution of audience viewership and ratings across the season, daily and prime 
     emptyMessage="Season 13 data available on TFX only"
 /> 
 
-``` sql daily_audience_over_season
-
+``` sql weekly_audience_over_season
     -- Evidence shifts BigQuery DATE values back by 1 day when loading via `npm run sources` 
     -- Fix: correct the actual DATE value at the source with `+ interval 1 day`, so air_date stays a true DATE type and matches BigQuery exactly. 
     -- The function strftime() cannot work as it only reformats the value to text 
@@ -197,54 +187,65 @@ Evolution of audience viewership and ratings across the season, daily and prime 
     with 
     daily_ratings as ( 
         select
-            air_date + interval 1 day as air_date, 
-            sum(num_viewers) as viewers,
-            sum(pct_rating_total) / 100 as ratings
+            air_date
+            , channel_name
+            , week_number
+            , sum(num_viewers) as viewers
+            , sum(pct_rating_total) / 100 as ratings
         from 
             tv_ratings
         where 
             show_type != 'prime'
             and show_number = '${inputs.season_filter.value}'
-            and upper(channel_name) = '${inputs.channel_filter.value}'
         group by
-            1
-    ), 
-    base as (
-        select 
-            air_date
-            , viewers
-            , ratings 
-            , date_diff('day', min(air_date) over (), air_date) as day_num
+            1, 2, 3
+    )
+    , weekly_ratings as (
+        select
+            distinct channel_name
+            , week_number as air_date_week
+            , avg(viewers) over(partition by channel_name, week_number) as viewers_channel
+            , avg(ratings) over(partition by channel_name, week_number) as ratings_channel
+            , avg(viewers) over(partition by week_number) as viewers
+            , avg(ratings) over(partition by week_number) as ratings
         from 
-            daily_ratings
+            daily_ratings  
+    )
+    , base as (
+        select 
+            air_date_week
+            , channel_name
+            , viewers_channel
+            , ratings_channel 
+            , viewers
+            , ratings
+            , air_date_week - min(air_date_week) over () as week_num
+        from 
+            weekly_ratings
     )
     , regression as (
         select
-            covar_pop(ratings, day_num) / nullif(var_pop(day_num), 0) as slope
-            , avg(ratings) - (covar_pop(ratings, day_num) / nullif(var_pop(day_num), 0)) * avg(day_num) as intercept
+            covar_pop(ratings, week_num) / nullif(var_pop(week_num), 0) as slope
+            , avg(ratings) - (covar_pop(ratings, week_num) / nullif(var_pop(week_num), 0)) * avg(week_num) as intercept
         from 
             base
     )
     select
-        b.air_date,
-        b.viewers,
-        b.ratings,
-        r.intercept + r.slope * b.day_num as ratings_trend
+        b.*
+        , r.intercept + r.slope * b.week_num as ratings_trend
     from 
         base b
     cross join 
         regression r
     order by 
-        b.air_date
+        b.air_date_week
 ```
+
 <BarChart
-    data={daily_audience_over_season}
-    x=air_date
-    y=viewers
-    y2={['ratings', 'ratings_trend']}
-    y2Fmt=pct1
-    y2SeriesType=line
-    y2AxisTitle="Ratings"
+    data={weekly_audience_over_season}
+    x=air_date_week
+    y=viewers_channel  
+    series=channel_name
     colorPalette={['#a4b8fc', '#111726ae']}
     title="Daily Audience Trend"
     subtitle="Weekdays only (Monday-Friday)"
