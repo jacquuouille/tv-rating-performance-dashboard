@@ -1,5 +1,6 @@
 ---
 title: Kick-off
+sidebar_position: 4
 ---
 
 A comparison snapshot of rating performance for the kick-off of the French TV show 👁️.  
