@@ -1,6 +1,6 @@
 --- 
 title: About (𝒊)
-sidebar_position: 5
+sidebar_position: 6
 ---
 
 Overview page: It is designed as the entry point of the dashboard, giving stakeholders an immediate read on how the show is performing before drilling into more detailed pages (daily episodes, prime, audience segments).
