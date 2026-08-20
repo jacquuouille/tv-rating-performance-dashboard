@@ -10,6 +10,8 @@ A snapshot of daily ratings performance for the selected season of the French TV
         distinct show_number
     from 
         tv_ratings
+    order by 
+        1 desc
 ```
 
 ```sql channel_listing
@@ -20,6 +22,8 @@ A snapshot of daily ratings performance for the selected season of the French TV
     where 
         channel_name != 'tf1'
         and show_number = '${inputs.season_filter.value}'
+    order by 
+        1
 ```
 
 ```sql week_number_listing

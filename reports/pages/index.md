@@ -10,7 +10,7 @@ A snapshot of ratings performance for the selected season of the French TV show 
     from 
         tv_ratings
     order by 
-        1
+        1 desc
 ```
 
 <Dropdown
@@ -18,7 +18,7 @@ A snapshot of ratings performance for the selected season of the French TV show 
     data={season_options}
     value=show_number
     title="Season"
-    order=false
+    order=show_number
 />
 
 ## Audience
@@ -124,7 +124,7 @@ Evolution of audience viewership and ratings across the season, daily and prime 
     y2LabelFmt=pct1
     colorPalette={['#a4b8fc', '#111726ae']}
     title="Daily Audience Performance"
-    subtitle="TMC only for season 14, TFX for season 13"
+    subtitle="TMC only for season 14, TFX for season 13 (Weekdays & Sundays)"
     chartAreaHeight=250
     emptySet=pass
     emptyMessage="Season 13 data available on TFX only"
