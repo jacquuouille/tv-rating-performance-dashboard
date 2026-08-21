@@ -18,7 +18,6 @@ A snapshot of ratings performance for the selected season of the French TV show 
     data={season_options}
     value=show_number
     title="Season"
-    order=show_number
 />
 
 ## Audience
